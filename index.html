@@ -17,7 +17,7 @@ const theme = {
   blackKnob: "bg-gradient-to-b from-[#4A4A4A] to-[#1A1A1A] border border-[#000000] shadow-[0_15px_25px_rgba(0,0,0,0.4),_inset_0_2px_3px_rgba(255,255,255,0.3)]",
 };
 
-// --- SISTEMA DE AUDIO (Enlaces Públicos) ---
+// --- SISTEMA DE AUDIO ---
 const sounds = {
   click: new Audio('https://www.soundjay.com/buttons/sounds/button-16.mp3'),     // Navegación
   switch: new Audio('https://www.soundjay.com/mechanical/sounds/switch-1.mp3'),  // Botones mecánicos (+ / -)
@@ -27,7 +27,8 @@ const sounds = {
 const playSound = (type) => {
   if (sounds[type]) {
     sounds[type].currentTime = 0;
-    sounds[type].play().catch(err => console.log("Audio bloqueado temporalmente por el navegador:", err));
+    // Capturamos el error silenciosamente por si el navegador bloquea el auto-play inicial
+    sounds[type].play().catch(err => console.log("Audio bloqueado temporalmente", err));
   }
 };
 
@@ -40,7 +41,7 @@ export default function App() {
   const [completedExercises, setCompletedExercises] = useState({});
   const [stepHistory, setStepHistory] = useState([]);
 
-  // Lógica de carga e historial
+  // Lógica de carga e historial automático
   useEffect(() => {
     const today = new Date().toLocaleDateString('es-ES');
     const savedDate = localStorage.getItem('lastDate');
@@ -410,7 +411,7 @@ function TrackerTab({ steps, setSteps, water, setWater, workout, setWorkout, rou
 }
 
 function MenuTab() {
-  const mealData = { /* Mismos datos */ 
+  const mealData = { 
     desayuno: { title: "PROTOCOL: SIMBIÓTICO", items: ["AVENA INTEGRAL [SEC:01]", "MANZANA (FIBRA) [SEC:02]", "YOGUR GRIEGO [SEC:03]"], tip: "TÉ VERDE A MEDIA MAÑANA." },
     comida: { title: "PROTOCOL: EQUILIBRIO", items: ["POLLO/QUINOA/VERDE [OPT:A]", "LENTEJAS ESTOFADAS [OPT:B]", "SALMÓN/BRÓCOLI [OPT:C]"], tip: "MANZANA T-15 MINUTOS." },
     cena: { title: "PROTOCOL: NOCHE", items: ["HUEVOS/CHAMPIÑÓN [OPT:A]", "PESCADO BLANCO [OPT:B]", "ENSALADA DE ATÚN [OPT:C]"], tip: "EVITAR ALCOHOL/AZÚCAR." }
@@ -421,7 +422,6 @@ function MenuTab() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className={`${theme.panel3D} rounded-3xl p-6 relative`}>
-         {/* ... Contenido menú adaptado al nuevo panel 3D (similar al Tracker) */}
          <div className={`flex gap-2 mb-6 p-1.5 rounded-xl ${theme.grooveInset}`}>
           {['desayuno', 'comida', 'cena'].map((type) => (
             <button
@@ -484,6 +484,5 @@ function TipCard({ idx, title, content }) {
     </div>
   );
 }
-
 
 
